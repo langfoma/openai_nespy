@@ -5,8 +5,7 @@ import gym_super_mario_bros
 import os
 import pickle
 import time
-
-from mario_rl.utils.progress import ProgressDisplay
+import tqdm
 
 
 def main(args):
@@ -74,15 +73,18 @@ def replay(env, recording, args):
         return
     actions = recording['action']
 
-    # init progress bar
-    progress = ProgressDisplay(bar_length=20, show_steps=False, show_time=False)
-
     # init episode metrics
     eps_length = 0
     eps_reward = 0
 
     last_update_time = time.time()
     done = False
+    pbar = tqdm.tqdm(total=len(actions), bar_format='{desc} {percentage:3.0f}%|{bar}{r_bar}')
+    pbar.set_description_str('{} ({}, {})'.format(
+        f'{"[Playing]":>12}',
+        f'length: {0:>5.0f}',
+        f'reward: {0:>5.0f}',
+    ))
     while not done and eps_length < len(actions):
         # enforce refresh delay
         elapsed_time = time.time() - last_update_time
@@ -102,16 +104,15 @@ def replay(env, recording, args):
         eps_reward += reward
 
         # update progress
-        progress.update(eps_length, len(actions), suffix_text=' - '.join([
-            'length: {:.0f}'.format(eps_length),
-            'reward: {:.0f}'.format(eps_reward),
-        ]))
+        pbar.update(1)
+        pbar.set_description_str('{} ({}, {})'.format(
+            f'{"[Playing]":>12}',
+            f'length: {eps_length:>5.0f}',
+            f'reward: {eps_reward:>5.0f}',
+        ))
 
         # update time for next update
         last_update_time = time.time()
-
-    # terminate progress bar
-    progress.terminate()
 
 
 if __name__ == '__main__':

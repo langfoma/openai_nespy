@@ -174,6 +174,11 @@ class Agent(object):
         raise NotImplementedError()
 
     def save(self, file_path, save_log=False, save_memory=False):
+        # create file directory
+        file_dir = os.path.dirname(file_path)
+        if file_dir:
+            os.makedirs(file_dir, exist_ok=True)
+
         # save serialized agent to filesystem
         torch.save(self.serialize(), file_path)
 
