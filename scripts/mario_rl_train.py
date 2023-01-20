@@ -140,7 +140,7 @@ def main(args):
         replay(env, agent, args)
     else:
         # train agent
-        agent_path = os.path.join(args.results_dir, 'mario_{}.pth'.format(args.agent_type))
+        agent_path = os.path.join(args.results_dir, 'mario_{}.pt'.format(args.agent_type))
         train(env, agent, agent_path, args)
 
 
